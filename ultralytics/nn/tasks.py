@@ -31,6 +31,7 @@ from ultralytics.nn.modules import (
     BiFPN_Add2,
     BiFPN_Add3,
     C3k2_DCNV4,
+    DAN,
 
     C2f,
     C2fAttn,
@@ -73,6 +74,7 @@ from ultralytics.utils.loss import (
     E2EDetectLoss,
     v8ClassificationLoss,
     v8DetectionLoss,
+    DomainAdaptiveDetectionLoss, # @zwqgkd
     v8OBBLoss,
     v8PoseLoss,
     v8SegmentationLoss,
@@ -149,6 +151,7 @@ class BaseModel(nn.Module):
         """
         self.model.cuda() #@zwqgkd
         y, dt, embeddings = [], [], []  # outputs
+        preds_dan=[]
         for m in self.model:
             if m.f != -1:  # if not from previous layer
                 x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]  # from earlier layers
@@ -156,13 +159,15 @@ class BaseModel(nn.Module):
                 self._profile_one_layer(m, x, dt)
             x = m(x)  # run
             y.append(x if m.i in self.save else None)  # save output
+            if isinstance(m, DAN):
+                preds_dan=x
             if visualize:
                 feature_visualization(x, m.type, m.i, save_dir=visualize)
             if embed and m.i in embed:
                 embeddings.append(nn.functional.adaptive_avg_pool2d(x, (1, 1)).squeeze(-1).squeeze(-1))  # flatten
                 if m.i == max(embed):
                     return torch.unbind(torch.cat(embeddings, 1), dim=0)
-        return x
+        return x, preds_dan # @zwqgkd
 
     def _predict_augment(self, x):
         """Perform augmentations on input image x and return augmented inference."""
@@ -340,7 +345,7 @@ class DetectionModel(BaseModel):
                 """Performs a forward pass through the model, handling different Detect subclass types accordingly."""
                 if self.end2end:
                     return self.forward(x)["one2many"]
-                return self.forward(x)[0] if isinstance(m, (Segment, Pose, OBB)) else self.forward(x)
+                return self.forward(x)[0][0] if isinstance(m, (Segment, Pose, OBB)) else self.forward(x)[0]
 
             # m.stride = torch.tensor([s / x.shape[-2] for x in _forward(torch.zeros(1, ch, s, s))])  # forward
             m.stride = torch.tensor([s / x.shape[-2] for x in _forward(torch.zeros(1, ch, s, s).to(device))])  # @zwqgkd
@@ -397,6 +402,9 @@ class DetectionModel(BaseModel):
     def init_criterion(self):
         """Initialize the loss criterion for the DetectionModel."""
         return E2EDetectLoss(self) if getattr(self, "end2end", False) else v8DetectionLoss(self)
+        # @zwqgkd
+        # return E2EDetectLoss(self) if getattr(self, "end2end", False) else DomainAdaptiveDetectionLoss(self)
+    
 
 
 class OBBModel(DetectionModel):
@@ -692,7 +700,7 @@ class WorldModel(DetectionModel):
             self.criterion = self.init_criterion()
 
         if preds is None:
-            preds = self.forward(batch["img"], txt_feats=batch["txt_feats"])
+            preds = self.forward(batch["img"][0], txt_feats=batch["txt_feats"])
         return self.criterion(preds, batch)
 
 
@@ -1034,6 +1042,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 C2fPSA,
                 C2fCIB,
                 C2PSA,
+                C3k2_DCNV4, # @zwqgkd
             }:
                 args.insert(2, n)  # number of repeats
                 n = 1
@@ -1079,6 +1088,8 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
         # @zwqgkd
         elif m in {BiFPN_Add2, BiFPN_Add3}:
             c2 = max([ch[x] for x in f])
+        elif m is DAN:
+            args.append([ch[x] for x in f])
         else:
             c2 = ch[f]
 

@@ -22,4 +22,6 @@ if __name__=='__main__':
     # BiFPN
     # train("model_cfg/yolo11_bifpn.yaml","yolo11n.pt") 
     # DCnv4
-    train("model_cfg/yolo11_dcnv4.yaml","yolo11n.pt")
+    # train("model_cfg/yolo11_dcnv4.yaml","yolo11n.pt")
+    # DAN
+    train("model_cfg/yolo11_dan.yaml", "yolo11n.pt")

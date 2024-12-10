@@ -73,15 +73,15 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets\dawn"
+# splitPath = R"datasets\dawn"
 
 # dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Fog\Fog", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Fog\Fog\Fog_YOLO_darknet", splitPath)
 # dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Rain\Rain", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Rain\Rain\Rain_YOLO_darknet", splitPath)
 # dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Sand\Sand", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Sand\Sand\Sand_YOLO_darknet", splitPath)
 # dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Snow\Snow", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Snow\Snow\Snow_YOLO_darknet", splitPath)
 
-class_id_mapping ={1:0,2:1,3:2,4:3,6:4,7:5,8:6}
-renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
+# class_id_mapping ={1:0,2:1,3:2,4:3,6:4,7:5,8:6}
+# renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
 
 
 # class_ids, num_classes = get_class_ids(os.path.join(splitPath, "val", "labels"))
@@ -91,4 +91,8 @@ renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
 
 
 
-
+a = torch.tensor([1.0, 2.0, 3.0])
+y=[]
+y.append(a)
+a=[4.0, 5.0, 6.0]
+print(y)

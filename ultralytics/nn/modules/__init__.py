@@ -27,6 +27,9 @@ from .dcnv4 import (
     Bottleneck_DCNV4,
     C3k2_DCNV4,
 )
+from .dan import (
+    DAN,
+)
 
 from .block import (
     C1,
@@ -171,4 +174,5 @@ __all__ = (
     "BiFPN_Add2",
     "BiFPN_Add3",
     "C3k2_DCNV4",
+    "DAN",
 )

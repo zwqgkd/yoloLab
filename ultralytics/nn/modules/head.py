@@ -171,7 +171,6 @@ class Detect(nn.Module):
         i = torch.arange(batch_size)[..., None]  # batch indices
         return torch.cat([boxes[i, index // nc], scores[..., None], (index % nc)[..., None].float()], dim=-1)
 
-
 class Segment(Detect):
     """YOLO Segment head for segmentation models."""
 

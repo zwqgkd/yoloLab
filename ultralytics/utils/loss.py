@@ -206,11 +206,18 @@ class v8DetectionLoss:
 
     def __call__(self, preds, batch):
         """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
+        # @zwqgkd
+        domain_pred = preds[1]
+        domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.float())
+        preds=preds[0]
         loss = torch.zeros(3, device=self.device)  # box, cls, dfl
         feats = preds[1] if isinstance(preds, tuple) else preds
         pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
             (self.reg_max * 4, self.nc), 1
         )
+
+        print(f"pred_distri.shape: {pred_distri.shape}")
+        print(f"pred_scores.shape: {pred_scores.shape}")
 
         pred_scores = pred_scores.permute(0, 2, 1).contiguous()
         pred_distri = pred_distri.permute(0, 2, 1).contiguous()
@@ -260,6 +267,15 @@ class v8DetectionLoss:
 
         return loss.sum() * batch_size, loss.detach()  # loss(box, cls, dfl)
 
+
+class DomainAdaptiveDetectionLoss(v8DetectionLoss):
+    def __init__(self, model):
+        super.__init__(model)
+        pass 
+
+    def __call__(self, preds, preds_dan, batch):
+        print(f"preds: ${preds}; preds_dan: ${preds_dan}\n")
+        
 
 class v8SegmentationLoss(v8DetectionLoss):
     """Criterion class for computing training losses."""
