@@ -207,10 +207,23 @@ class v8DetectionLoss:
     def __call__(self, preds, batch):
         """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
         # @zwqgkd
-        domain_pred = preds[1]
-        domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.float())
+        def getDomainLabels(filePaths)->list:
+            domain_labels = []
+            for filePath in filePaths:
+                if "real" in filePath:
+                    domain_labels.append(1)
+                else:
+                    domain_labels.append(0)
+            return domain_labels
+        
+        domain_loss = 0.0  
+        # domain_label = getDomainLabels(batch["img_files"])
+        # domain_pred = preds[1]
+        # domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.float())
+        
+        
         preds=preds[0]
-        loss = torch.zeros(3, device=self.device)  # box, cls, dfl
+        loss = torch.zeros(4, device=self.device)  # box, cls, dfl
         feats = preds[1] if isinstance(preds, tuple) else preds
         pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
             (self.reg_max * 4, self.nc), 1
@@ -264,8 +277,10 @@ class v8DetectionLoss:
         loss[0] *= self.hyp.box  # box gain
         loss[1] *= self.hyp.cls  # cls gain
         loss[2] *= self.hyp.dfl  # dfl gain
-
-        return loss.sum() * batch_size, loss.detach()  # loss(box, cls, dfl)
+        loss[3] = domain_loss    # @zwqgkd domain loss
+        
+        lambda_=0.1
+        return loss.sum() * batch_size  + lambda_ * domain_loss, loss.detach()  # loss(box, cls, dfl)
 
 
 class DomainAdaptiveDetectionLoss(v8DetectionLoss):

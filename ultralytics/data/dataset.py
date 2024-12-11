@@ -155,7 +155,6 @@ class YOLODataset(BaseDataset):
         if not labels:
             LOGGER.warning(f"WARNING ⚠️ No images found in {cache_path}, training may not work correctly. {HELP_URL}")
         self.im_files = [lb["im_file"] for lb in labels]  # update im_files
-
         # Check if the dataset is all boxes or all segments
         lengths = ((len(lb["cls"]), len(lb["bboxes"]), len(lb["segments"])) for lb in labels)
         len_cls, len_boxes, len_segments = (sum(x) for x in zip(*lengths))
