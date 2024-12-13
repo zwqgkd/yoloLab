@@ -229,9 +229,6 @@ class v8DetectionLoss:
             (self.reg_max * 4, self.nc), 1
         )
 
-        print(f"pred_distri.shape: {pred_distri.shape}")
-        print(f"pred_scores.shape: {pred_scores.shape}")
-
         pred_scores = pred_scores.permute(0, 2, 1).contiguous()
         pred_distri = pred_distri.permute(0, 2, 1).contiguous()
 

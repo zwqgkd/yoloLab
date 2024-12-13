@@ -1,13 +1,13 @@
 from ultralytics import YOLO  # 导入 YOLO 模型
 
 
-def train(yamlPath,modelName):
+def train(yamlPath, dataPath, modelName="yolo11s.pt"):
     # 1. 加载预训练模型
     model = YOLO(yamlPath).load(modelName)  # 这里假设你已经下载并使用了一个预训练模型的路径
     # model = YOLO("yolo11n.pt")
     # 2. 训练模型
     train_results = model.train(
-    data="dataset_yaml/dawn.yaml",  # 数据集配置文件路径，这里你应该提供正确的 YAML 配置文件路径
+    data=dataPath,  # 数据集配置文件路径，这里你应该提供正确的 YAML 配置文件路径
     epochs=1,  # 训练的轮数，可以根据需要调整
     imgsz=640,  # 图像大小，YOLO 模型输入的图像尺寸，这里是 640x640
     batch=16,  # 批大小，根据显存和硬件选择合适的值
@@ -20,8 +20,8 @@ def train(yamlPath,modelName):
 if __name__=='__main__':
     # train("model_cfg/yolo11.yaml","yolo11n.pt")
     # BiFPN
-    # train("model_cfg/yolo11_bifpn.yaml","yolo11n.pt") 
+    train("model_cfg/yolo11_bifpn.yaml", "datasets/bdd10k.yaml", "yolo11s.pt") 
     # DCnv4
     # train("model_cfg/yolo11_dcnv4.yaml","yolo11n.pt")
     # DAN
-    train("model_cfg/yolo11_dan.yaml", "yolo11n.pt")
+    # train("model_cfg/yolo11_dan.yaml", "yolo11n.pt")

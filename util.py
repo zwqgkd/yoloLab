@@ -90,9 +90,3 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 
 
 
-
-a = torch.tensor([1.0, 2.0, 3.0])
-y=[]
-y.append(a)
-a=[4.0, 5.0, 6.0]
-print(y)
