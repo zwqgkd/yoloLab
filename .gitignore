@@ -1,5 +1,6 @@
 runs/
 .vscode/
-datasets/
+**/datasets/*
+!datasets/data.yaml
 .venv/
 .idea/
