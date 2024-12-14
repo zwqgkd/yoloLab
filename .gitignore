@@ -1,4 +1,3 @@
-*.pt
 runs/
 .vscode/
 datasets/

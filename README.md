@@ -1,4 +1,6 @@
 ### Environment
 - python 3.12.0
-- torch 2.5.1+cu12.4
+- 构建datasets/
+- `pip install opencv-python pandas scipy`
+- 选择对应的DCNv4_~，改名为DCNv4
  
