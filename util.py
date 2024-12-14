@@ -14,6 +14,8 @@ def get_class_ids(labels_path):
             try:
                 with open(os.path.join(labels_path, label_file), "r") as f:
                     for line in f:
+                        if(int(line.split(" ")[0])==7):
+                            print(label_file)
                         try:
                             class_id=int(line.split(" ")[0])
                             class_ids.add(class_id)
@@ -73,20 +75,21 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-# splitPath = R"datasets\dawn"
+splitPath = R"datasets\dawn"
 
-# dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Fog\Fog", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Fog\Fog\Fog_YOLO_darknet", splitPath)
-# dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Rain\Rain", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Rain\Rain\Rain_YOLO_darknet", splitPath)
-# dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Sand\Sand", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Sand\Sand\Sand_YOLO_darknet", splitPath)
-# dataSetSplit(R"C:\Users\zwq\Downloads\766ygrbt8y-3\Snow\Snow", R"C:\Users\zwq\Downloads\766ygrbt8y-3\Snow\Snow\Snow_YOLO_darknet", splitPath)
+rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
-# class_id_mapping ={1:0,2:1,3:2,4:3,6:4,7:5,8:6}
+
+# dataSetSplit(os.path.join(rootPath, "Snow", "Snow"), os.path.join(rootPath, "Snow", "Snow", "Snow_YOLO_darknet"), splitPath)
+
+
+
+print(get_class_ids(os.path.join(splitPath, "train", "labels")))
+print(get_class_ids(os.path.join(splitPath, "val", "labels")))
+# class_id_mapping ={1:0,2:1,3:2,4:3,6:4,8:5}
 # renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
+# renumber_class_ids(os.path.join(splitPath, "val", "labels"), class_id_mapping)
 
-
-# class_ids, num_classes = get_class_ids(os.path.join(splitPath, "val", "labels"))
-# print(f"数据集包含的类别 ID: {class_ids}")
-# print(f"类别数量: {num_classes}")
 
 
 

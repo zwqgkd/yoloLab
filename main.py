@@ -18,10 +18,4 @@ def train(yamlPath, dataPath, modelName="yolo11s.pt"):
     )
 
 if __name__=='__main__':
-    # train("model_cfg/yolo11.yaml","yolo11n.pt")
-    # BiFPN
-    train("model_cfg/yolo11_bifpn.yaml", "datasets/bdd10k.yaml", "yolo11s.pt") 
-    # DCnv4
-    # train("model_cfg/yolo11_dcnv4.yaml","yolo11n.pt")
-    # DAN
-    # train("model_cfg/yolo11_dan.yaml", "yolo11n.pt")
+    train("model_cfg/yolo11.yaml", "datasets/data.yaml", "yolo11s.pt") 
