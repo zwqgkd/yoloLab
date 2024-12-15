@@ -4,3 +4,4 @@ runs/
 !datasets/data.yaml
 .venv/
 .idea/
+**/__pycache__/
