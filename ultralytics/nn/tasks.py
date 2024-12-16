@@ -33,6 +33,7 @@ from ultralytics.nn.modules import (
     Concat_BiFPN,
     C3k2_DCNV4,
     DAN,
+    AKConv,
 
     C2f,
     C2fAttn,
@@ -983,6 +984,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                     args[j] = locals()[a] if a in locals() else ast.literal_eval(a)
         n = n_ = max(round(n * depth), 1) if n > 1 else n  # depth gain
         if m in {
+            AKConv, #@zwqgkd
             Classify,
             Conv,
             ConvTranspose,

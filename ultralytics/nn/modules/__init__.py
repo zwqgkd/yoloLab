@@ -31,6 +31,9 @@ from .dcnv4 import (
 from .dan import (
     DAN,
 )
+from .akconv import (
+    AKConv,
+)
 
 from .block import (
     C1,
@@ -177,4 +180,5 @@ __all__ = (
     "Concat_BiFPN",
     "C3k2_DCNV4",
     "DAN",
+    "AKConv",
 )
