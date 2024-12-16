@@ -223,7 +223,7 @@ class v8DetectionLoss:
         
         
         preds=preds[0]
-        loss = torch.zeros(4, device=self.device)  # box, cls, dfl
+        loss = torch.zeros(3, device=self.device)  # box, cls, dfl
         feats = preds[1] if isinstance(preds, tuple) else preds
         pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
             (self.reg_max * 4, self.nc), 1
@@ -274,10 +274,11 @@ class v8DetectionLoss:
         loss[0] *= self.hyp.box  # box gain
         loss[1] *= self.hyp.cls  # cls gain
         loss[2] *= self.hyp.dfl  # dfl gain
-        loss[3] = domain_loss    # @zwqgkd domain loss
+        # loss[3] = domain_loss    # @zwqgkd domain loss
         
-        lambda_=0.1
-        return loss.sum() * batch_size  + lambda_ * domain_loss, loss.detach()  # loss(box, cls, dfl)
+        # lambda_=0.1
+        # return loss.sum() * batch_size  + lambda_ * domain_loss, loss.detach()  # loss(box, cls, dfl)
+        return loss.sum() * batch_size, loss.detach()
 
 
 class DomainAdaptiveDetectionLoss(v8DetectionLoss):

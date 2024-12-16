@@ -12,6 +12,10 @@ from ultralytics.utils.tal import TORCH_1_10, dist2bbox, dist2rbox, make_anchors
 
 from .block import DFL, BNContrastiveHead, ContrastiveHead, Proto
 from .conv import Conv, DWConv
+from .akconv import AKConv
+from .dcnv4 import (
+    DCNV4_Yolo11
+)
 from .transformer import MLP, DeformableTransformerDecoder, DeformableTransformerDecoderLayer
 from .utils import bias_init_with_prob, linear_init
 
@@ -43,6 +47,14 @@ class Detect(nn.Module):
         self.cv2 = nn.ModuleList(
             nn.Sequential(Conv(x, c2, 3), Conv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1)) for x in ch
         )
+        # self.cv2= nn.ModuleList(
+        #     nn.Sequential(
+        #         nn.Sequential(DCNV4_Yolo11(x,x,3), Conv(x,c2,3)),
+        #         nn.Sequential(DCNV4_Yolo11(c2,c2,3), Conv(c2,c2,3)),
+        #         nn.Conv2d(c2, 4 * self.reg_max, 1)
+        #     ) 
+        #     for x in ch
+        # )
         self.cv3 = (
             nn.ModuleList(nn.Sequential(Conv(x, c3, 3), Conv(c3, c3, 3), nn.Conv2d(c3, self.nc, 1)) for x in ch)
             if self.legacy
