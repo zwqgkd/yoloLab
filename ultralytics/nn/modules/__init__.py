@@ -21,6 +21,7 @@ Example:
 from .bifpn import (
     BiFPN_Add2,
     BiFPN_Add3,
+    Concat_BiFPN
 )
 from .dcnv4 import (
     DCNV4_Yolo11,
@@ -173,6 +174,7 @@ __all__ = (
     # @zwqgkd
     "BiFPN_Add2",
     "BiFPN_Add3",
+    "Concat_BiFPN",
     "C3k2_DCNV4",
     "DAN",
 )

@@ -35,3 +35,19 @@ class BiFPN_Add3(nn.Module):
 		weight = w / (torch.sum(w, dim=0) + self.epsilon)
 		# Fast normalized fusion
 		return self.conv(self.silu(weight[0] * x[0] + weight[1] * x[1] + weight[2] * x[2]))
+	
+
+
+class Concat_BiFPN(nn.Module):
+    def __init__(self, dimension=1, length=2):
+        super(Concat_BiFPN, self).__init__()
+        self.d = dimension
+        self.w = nn.Parameter(torch.ones(length, dtype=torch.float32), requires_grad=True)
+        self.epsilon = 0.0001
+
+    def forward(self, x):
+        w = self.w
+        weight = w / (torch.sum(w, dim=0) + self.epsilon)  # 将权重进行归一化
+        # Fast normalized fusion
+        x = [weight[i] * x[i] for i in range(len(x))]
+        return torch.cat(x, self.d)
