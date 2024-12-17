@@ -18,5 +18,5 @@ def train(yamlPath, dataPath, modelName="yolo11s.pt"):
     )
 
 if __name__=='__main__':
-    # train("model_cfg/yolo11.yaml", "datasets/data.yaml", "yolo11n.pt") #0.325
-    train("model_cfg/yolo11_concat_bifpn.yaml", "datasets/data.yaml", "yolo11n.pt") #0.332
+    train("model_cfg/yolo11.yaml", "datasets/data.yaml", "yolo11n.pt") #543 345
+    # train("model_cfg/yolo11_bifpn.yaml", "datasets/data.yaml", "yolo11n.pt") #0.
