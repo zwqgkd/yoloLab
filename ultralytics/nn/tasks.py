@@ -34,6 +34,7 @@ from ultralytics.nn.modules import (
     C3k2_DCNV4,
     DAN,
     AKConv,
+    C2DA,
 
     C2f,
     C2fAttn,
@@ -1019,6 +1020,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             SCDown,
             C2fCIB,
             C3k2_DCNV4, # @zwqgkd
+            C2DA, # @zwqgkd
         }:
             c1, c2 = ch[f], args[0]
             if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
@@ -1046,6 +1048,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 C2fCIB,
                 C2PSA,
                 C3k2_DCNV4, # @zwqgkd
+                C2DA, # @zwqgkd
             }:
                 args.insert(2, n)  # number of repeats
                 n = 1

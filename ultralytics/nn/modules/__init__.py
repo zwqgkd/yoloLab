@@ -34,6 +34,9 @@ from .dan import (
 from .akconv import (
     AKConv,
 )
+from .C2DA import(
+    C2DA,
+)
 
 from .block import (
     C1,
@@ -181,4 +184,5 @@ __all__ = (
     "C3k2_DCNV4",
     "DAN",
     "AKConv",
+    "C2DA",
 )
