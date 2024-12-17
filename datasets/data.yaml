@@ -6,7 +6,13 @@
 # "other vehicle", "other person", "trailer"]
 
 
-train: dawn/train/images
-val: dawn/val/images
-nc: 6
-names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
+# train: dawn/train/images
+# val: dawn/val/images
+# nc: 6
+# names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
+
+
+train: UG/train/images
+val: UG/val/images
+nc: 5
+names: ["class_1", "class_2", "class_3", "class_4", "class_5"]
