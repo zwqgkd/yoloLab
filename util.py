@@ -75,7 +75,7 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets\dawn"
+splitPath = R"datasets/UG"
 
 rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
