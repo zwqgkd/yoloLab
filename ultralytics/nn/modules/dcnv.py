@@ -1,7 +1,23 @@
 import torch.nn as nn
 import torch
 from .conv import Conv
-from DCNv4.modules.dcnv4 import DCNv4  # 导入新的 DCNv4
+from DCN.modules.dcnv3 import DCNv3  # 导入新的 DCNv4
+from DCNv4.modules.dcnv4 import DCNv4
+
+class DCN_Yolo11(nn.Module):
+    def __init__(self, inc, ouc, k=1, s=1, p=None, g=1, d=1, act=True):
+        super().__init__()
+        self.conv=Conv(inc, ouc, k=1)
+        self.dcnv3=DCNv3(ouc, kernel_size=k, stride=s, group=g, dilation=d,use_dcn_v4_op=True)
+        self.bn=nn.BatchNorm2d(ouc)
+        self.act=Conv.default_act
+    def forward(self, x):
+        x=self.conv(x)
+        x=x.permute(0,2,3,1)
+        x=self.dcnv3(x)
+        x=x.permute(0,3,1,2)
+        x=self.act(self.bn(x))
+        return x
 
 class DCNV4_Yolo11(nn.Module):  # 修改类名为 DCNV4
     def __init__(self, inc, ouc, k=1, s=1, p=None, g=1, d=1, act=True):
