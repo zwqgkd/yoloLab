@@ -217,10 +217,9 @@ class v8DetectionLoss:
             return domain_labels
         
         domain_loss = 0.0  
-        # domain_label = getDomainLabels(batch["img_files"])
-        # domain_pred = preds[1]
-        # domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.float())
-        
+        domain_pred=preds[1]
+        domain_label = getDomainLabels(batch["img_files"])
+        domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.squeeze())
         
         preds=preds[0]
         loss = torch.zeros(3, device=self.device)  # box, cls, dfl
@@ -274,11 +273,10 @@ class v8DetectionLoss:
         loss[0] *= self.hyp.box  # box gain
         loss[1] *= self.hyp.cls  # cls gain
         loss[2] *= self.hyp.dfl  # dfl gain
-        # loss[3] = domain_loss    # @zwqgkd domain loss
-        
-        # lambda_=0.1
-        # return loss.sum() * batch_size  + lambda_ * domain_loss, loss.detach()  # loss(box, cls, dfl)
-        return loss.sum() * batch_size, loss.detach()
+
+        lambda_domain =0.1
+        total_loss=loss.sum()*batch_size + lambda_domain*domain_loss
+        return total_loss, loss.detach()
 
 
 class DomainAdaptiveDetectionLoss(v8DetectionLoss):

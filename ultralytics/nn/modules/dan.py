@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Function
 from .conv import Conv
+import numpy as np
 
 class GradientReversalFunction(Function):
     @staticmethod
@@ -37,6 +38,20 @@ class GRL(nn.Module):
         """
         return GradientReversalFunction.apply(x, self.lambda_)
 
+class AdaptiveGRL(nn.Module):
+    def __init__(self, initial_lambda=0.0, max_lambda=1.0, alpha=10.0, beta=0.75):
+        super(AdaptiveGRL, self).__init__()
+        self.register_buffer('lambda_', torch.tensor(initial_lambda))
+        self.max_lambda = max_lambda
+        self.alpha = alpha
+        self.beta = beta
+        self.iter_num = 0
+
+    def forward(self, x):
+        self.iter_num += 1
+        p = float(self.iter_num) / self.alpha
+        self.lambda_ = torch.tensor(self.max_lambda * (2.0 / (1.0 + np.exp(-self.beta * p)) - 1.0))
+        return GradientReversalFunction.apply(x, self.lambda_)
 
 class DownsampleBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -106,7 +121,4 @@ class DAN(nn.Module):
         pooled = self.global_pool(merged_all)  
         print(f"pooled.shape: {pooled.shape}")
         domain_pred = pooled.view(pooled.size(0), -1)
-        
-        # domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.float())
-        # return domain_pred, domain_loss * self.lambda_
         return domain_pred
