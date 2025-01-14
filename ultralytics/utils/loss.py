@@ -207,18 +207,19 @@ class v8DetectionLoss:
     def __call__(self, preds, batch):
         """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
         # @zwqgkd
-        def getDomainLabels(filePaths)->list:
+        def getDomainLabels(filePaths, key0)->list:
             domain_labels = []
             for filePath in filePaths:
-                if "real" in filePath:
-                    domain_labels.append(1)
-                else:
+                if key0 in filePath:
                     domain_labels.append(0)
+                else:
+                    domain_labels.append(1)
             return domain_labels
         
         domain_loss = 0.0  
         domain_pred=preds[1]
-        domain_label = getDomainLabels(batch["img_files"])
+
+        domain_label = torch.tensor(getDomainLabels(batch["im_file"], ""), device=domain_pred.device, dtype=domain_pred.dtype)
         domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.squeeze())
         
         preds=preds[0]

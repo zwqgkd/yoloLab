@@ -13,9 +13,6 @@ from ultralytics.utils.tal import TORCH_1_10, dist2bbox, dist2rbox, make_anchors
 from .block import DFL, BNContrastiveHead, ContrastiveHead, Proto
 from .conv import Conv, DWConv
 from .akconv import AKConv
-from .dcnv4 import (
-    DCNV4_Yolo11
-)
 from .transformer import MLP, DeformableTransformerDecoder, DeformableTransformerDecoderLayer
 from .utils import bias_init_with_prob, linear_init
 

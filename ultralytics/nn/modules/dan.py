@@ -115,10 +115,8 @@ class DAN(nn.Module):
         merge_12 = self.merge1(merge_12)               
 
         merged_all = torch.cat([merge_12, f3_out], dim=1) 
-        merged_all = self.merge2(merged_all)   
-        print(f"merged_all.shape: {merged_all.shape}")            
+        merged_all = self.merge2(merged_all)             
 
         pooled = self.global_pool(merged_all)  
-        print(f"pooled.shape: {pooled.shape}")
         domain_pred = pooled.view(pooled.size(0), -1)
         return domain_pred
