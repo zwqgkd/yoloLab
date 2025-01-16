@@ -219,9 +219,11 @@ class v8DetectionLoss:
         domain_loss = 0.0  
         domain_pred=preds[1]
 
-        domain_label = torch.tensor(getDomainLabels(batch["im_file"], ""), device=domain_pred.device, dtype=domain_pred.dtype)
-        domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.squeeze())
-        
+        if isinstance(domain_pred, torch.Tensor):
+            domain_label = torch.tensor(getDomainLabels(batch["im_file"], ""), device=domain_pred.device, dtype=domain_pred.dtype)
+            domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.squeeze())
+        else:
+            domain_loss = domain_loss = torch.tensor(0.0, device=self.device)  # or any other default value
         preds=preds[0]
         loss = torch.zeros(3, device=self.device)  # box, cls, dfl
         feats = preds[1] if isinstance(preds, tuple) else preds

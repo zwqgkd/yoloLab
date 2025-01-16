@@ -7,23 +7,18 @@ import torch
 """
 统计类别个数
 """
-def get_class_ids(labels_path):
-    class_ids=set()
-    for label_file in os.listdir(labels_path):
-        if label_file.endswith(".txt"):
-            try:
-                with open(os.path.join(labels_path, label_file), "r") as f:
-                    for line in f:
-                        if(int(line.split(" ")[0])==7):
-                            print(label_file)
-                        try:
-                            class_id=int(line.split(" ")[0])
-                            class_ids.add(class_id)
-                        except ValueError:
-                            print(f"警告：文件{label_file}中存在无效的类别 ID")
-            except IOError:
-                print(f"警告：文件{label_file}无法打开")
-    return class_ids, len(class_ids)
+def get_class_id(labelPath):
+    class_map ={}
+    for txtFile in os.listdir(labelPath):
+        with open(os.path.join(labelPath, txtFile)) as f:
+            lines = f.readlines()
+            for line in lines:
+                class_id =line.split()[0]
+                if class_id not in class_map:
+                    class_map[class_id]=1
+                else:
+                    class_map[class_id]+=1
+    return class_map
 
 """重新给class_id编号"""
 def renumber_class_ids(labels_path,class_id_mapping):
@@ -75,7 +70,7 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets/UG"
+splitPath = R"datasets/dawn_snow2sand"
 
 rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
@@ -85,7 +80,7 @@ rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
 
 print(get_class_ids(os.path.join(splitPath, "train", "labels")))
-print(get_class_ids(os.path.join(splitPath, "val", "labels")))
+# print(get_class_ids(os.path.join(splitPath, "val", "labels")))
 # class_id_mapping ={1:0,2:1,3:2,4:3,6:4,8:5}
 # renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
 # renumber_class_ids(os.path.join(splitPath, "val", "labels"), class_id_mapping)
