@@ -221,7 +221,7 @@ class v8DetectionLoss:
             domain_labels = []
             for im_file in batch['im_file']:
                 # 根据实际数据集结构修改判断条件
-                domain_labels.append(0 if 'source' in str(im_file) else 1)
+                domain_labels.append(0 if 'snow' in str(im_file) else 1)
             domain_labels = torch.tensor(domain_labels, device=domain_pred.device, dtype=torch.float32)
             domain_loss = nn.functional.binary_cross_entropy_with_logits(
                 domain_pred.view(-1), domain_labels

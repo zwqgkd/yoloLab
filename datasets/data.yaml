@@ -10,10 +10,15 @@
 # nc: 6
 # names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
 
-train: dawn_snow2sand/train/images
+train: dawn_snow2sand_dan/train/images
 val: dawn_snow2sand/val/images
 nc: 6
 names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"] #看前3个cls
+
+# train: dawn_snow2sand/train/images
+# val: dawn_snow2sand/val/images
+# nc: 6
+# names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"] #看前3个cls
 
 # train: UG/train/images
 # val: UG/val/images
