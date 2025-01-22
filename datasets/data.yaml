@@ -5,11 +5,15 @@
 # "truck", "rider", "bicycle", "motorcycle", "train",
 # "other vehicle", "other person", "trailer"]
 
+train: dawn/train/images
+val: dawn/val/images
+nc: 6
+names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
 
-train: dawn_snow2sand/train/images
-val: dawn_snow2sand/val/images
-nc: 7
-names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6", "class_7"]
+# train: dawn_snow2sand/train/images
+# val: dawn_snow2sand/val/images
+# nc: 7
+# names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6", "class_7"]
 
 
 # train: UG/train/images

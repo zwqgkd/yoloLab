@@ -205,80 +205,92 @@ class v8DetectionLoss:
         return dist2bbox(pred_dist, anchor_points, xywh=False)
 
     def __call__(self, preds, batch):
-        """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
-        # @zwqgkd
-        def getDomainLabels(filePaths, key0)->list:
-            domain_labels = []
-            for filePath in filePaths:
-                if key0 in filePath:
-                    domain_labels.append(0)
-                else:
-                    domain_labels.append(1)
-            return domain_labels
+        """Calculate detection loss and domain classification loss."""
+        # 解包预测结果 (detection predictions, domain predictions)
+        det_preds, domain_pred = preds if isinstance(preds, tuple) else (preds, None)
         
-        domain_loss = 0.0  
-        domain_pred=preds[1]
-
-        if isinstance(domain_pred, torch.Tensor):
-            domain_label = torch.tensor(getDomainLabels(batch["im_file"], ""), device=domain_pred.device, dtype=domain_pred.dtype)
-            domain_loss = nn.functional.binary_cross_entropy_with_logits(domain_pred.squeeze(), domain_label.squeeze())
-        else:
-            domain_loss = domain_loss = torch.tensor(0.0, device=self.device)  # or any other default value
-        preds=preds[0]
+        # 初始化损失
         loss = torch.zeros(3, device=self.device)  # box, cls, dfl
-        feats = preds[1] if isinstance(preds, tuple) else preds
-        pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
-            (self.reg_max * 4, self.nc), 1
-        )
-
-        pred_scores = pred_scores.permute(0, 2, 1).contiguous()
-        pred_distri = pred_distri.permute(0, 2, 1).contiguous()
-
-        dtype = pred_scores.dtype
-        batch_size = pred_scores.shape[0]
-        imgsz = torch.tensor(feats[0].shape[2:], device=self.device, dtype=dtype) * self.stride[0]  # image size (h,w)
-        anchor_points, stride_tensor = make_anchors(feats, self.stride, 0.5)
-
-        # Targets
-        targets = torch.cat((batch["batch_idx"].view(-1, 1), batch["cls"].view(-1, 1), batch["bboxes"]), 1)
-        targets = self.preprocess(targets.to(self.device), batch_size, scale_tensor=imgsz[[1, 0, 1, 0]])
-        gt_labels, gt_bboxes = targets.split((1, 4), 2)  # cls, xyxy
-        mask_gt = gt_bboxes.sum(2, keepdim=True).gt_(0.0)
-
-        # Pboxes
-        pred_bboxes = self.bbox_decode(anchor_points, pred_distri)  # xyxy, (b, h*w, 4)
-        # dfl_conf = pred_distri.view(batch_size, -1, 4, self.reg_max).detach().softmax(-1)
-        # dfl_conf = (dfl_conf.amax(-1).mean(-1) + dfl_conf.amax(-1).amin(-1)) / 2
-
-        _, target_bboxes, target_scores, fg_mask, _ = self.assigner(
-            # pred_scores.detach().sigmoid() * 0.8 + dfl_conf.unsqueeze(-1) * 0.2,
-            pred_scores.detach().sigmoid(),
-            (pred_bboxes.detach() * stride_tensor).type(gt_bboxes.dtype),
-            anchor_points * stride_tensor,
-            gt_labels,
-            gt_bboxes,
-            mask_gt,
-        )
-
-        target_scores_sum = max(target_scores.sum(), 1)
-
-        # Cls loss
-        # loss[1] = self.varifocal_loss(pred_scores, target_scores, target_labels) / target_scores_sum  # VFL way
-        loss[1] = self.bce(pred_scores, target_scores.to(dtype)).sum() / target_scores_sum  # BCE
-
-        # Bbox loss
-        if fg_mask.sum():
-            target_bboxes /= stride_tensor
-            loss[0], loss[2] = self.bbox_loss(
-                pred_distri, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask
+        batch_size = len(batch['im_file'])  # 使用图片数量作为batch_size
+        
+        # 计算域分类损失
+        domain_loss = torch.tensor(0.0, device=self.device)
+        if domain_pred is not None:
+            # 根据文件路径判断域标签 (source: 0, target: 1)
+            domain_labels = []
+            for im_file in batch['im_file']:
+                # 根据实际数据集结构修改判断条件
+                domain_labels.append(0 if 'source' in str(im_file) else 1)
+            domain_labels = torch.tensor(domain_labels, device=domain_pred.device, dtype=torch.float32)
+            domain_loss = nn.functional.binary_cross_entropy_with_logits(
+                domain_pred.view(-1), domain_labels
+            )
+        
+        # 检查是否有检测标签（判断是否为源域数据）
+        has_labels = 'cls' in batch and 'bboxes' in batch and len(batch['cls']) > 0
+        
+        if has_labels:  # 源域数据：计算检测损失
+            feats = det_preds[1] if isinstance(det_preds, tuple) else det_preds
+            pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
+                (self.reg_max * 4, self.nc), 1
             )
 
-        loss[0] *= self.hyp.box  # box gain
-        loss[1] *= self.hyp.cls  # cls gain
-        loss[2] *= self.hyp.dfl  # dfl gain
+            pred_scores = pred_scores.permute(0, 2, 1).contiguous()
+            pred_distri = pred_distri.permute(0, 2, 1).contiguous()
 
-        lambda_domain =0.1
-        total_loss=loss.sum()*batch_size + lambda_domain*domain_loss
+            dtype = pred_scores.dtype
+            imgsz = torch.tensor(feats[0].shape[2:], device=self.device, dtype=dtype) * self.stride[0]
+            anchor_points, stride_tensor = make_anchors(feats, self.stride, 0.5)
+
+            # 处理目标
+            targets = torch.cat((batch["batch_idx"].view(-1, 1), batch["cls"].view(-1, 1), batch["bboxes"]), 1)
+            targets = self.preprocess(targets.to(self.device), batch_size, scale_tensor=imgsz[[1, 0, 1, 0]])
+            gt_labels, gt_bboxes = targets.split((1, 4), 2)
+            mask_gt = gt_bboxes.sum(2, keepdim=True).gt_(0.0)
+
+            # 预测框解码
+            pred_bboxes = self.bbox_decode(anchor_points, pred_distri)
+
+            _, target_bboxes, target_scores, fg_mask, _ = self.assigner(
+                pred_scores.detach().sigmoid(),
+                (pred_bboxes.detach() * stride_tensor).type(gt_bboxes.dtype),
+                anchor_points * stride_tensor,
+                gt_labels,
+                gt_bboxes,
+                mask_gt,
+            )
+
+            target_scores_sum = max(target_scores.sum(), 1)
+
+            # 分类损失
+            loss[1] = self.bce(pred_scores, target_scores.to(dtype)).sum() / target_scores_sum
+
+            # 边界框损失
+            if fg_mask.sum():
+                target_bboxes /= stride_tensor
+                loss[0], loss[2] = self.bbox_loss(
+                    pred_distri,
+                    pred_bboxes,
+                    anchor_points,
+                    target_bboxes,
+                    target_scores,
+                    target_scores_sum,
+                    fg_mask
+                )
+
+            # 应用损失权重
+            loss[0] *= self.hyp.box  # box gain
+            loss[1] *= self.hyp.cls  # cls gain
+            loss[2] *= self.hyp.dfl  # dfl gain
+            
+            det_loss = loss.sum() * batch_size
+        else:  # 目标域数据：检测损失为0
+            det_loss = torch.tensor(0.0, device=self.device)
+        
+        # 组合检测损失和域分类损失
+        lambda_domain = 0.1  # 域适应损失权重
+        total_loss = det_loss + lambda_domain * domain_loss
+        
         return total_loss, loss.detach()
 
 
