@@ -214,8 +214,9 @@ class v8DetectionLoss:
         batch_size = len(batch['im_file'])  # 使用图片数量作为batch_size
         
         # 计算域分类损失
-        domain_loss = torch.tensor(0.0, device=self.device)
-        if domain_pred is not None:
+        domain_loss = torch.tensor(0.0, device=self.device, requires_grad=True)
+        domain_judge_flag = isinstance(domain_pred, torch.Tensor)
+        if domain_judge_flag:
             # 根据文件路径判断域标签 (source: 0, target: 1)
             domain_labels = []
             for im_file in batch['im_file']:
@@ -229,7 +230,7 @@ class v8DetectionLoss:
         # 检查是否有检测标签（判断是否为源域数据）
         has_labels = 'cls' in batch and 'bboxes' in batch and len(batch['cls']) > 0
         
-        if has_labels:  # 源域数据：计算检测损失
+        if not domain_judge_flag or has_labels:  # 源域数据：计算检测损失
             feats = det_preds[1] if isinstance(det_preds, tuple) else det_preds
             pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
                 (self.reg_max * 4, self.nc), 1
@@ -285,7 +286,7 @@ class v8DetectionLoss:
             
             det_loss = loss.sum() * batch_size
         else:  # 目标域数据：检测损失为0
-            det_loss = torch.tensor(0.0, device=self.device)
+            det_loss = torch.tensor(0.0, device=self.device, requires_grad=True)
         
         # 组合检测损失和域分类损失
         lambda_domain = 0.1  # 域适应损失权重

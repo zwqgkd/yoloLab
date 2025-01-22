@@ -20,6 +20,20 @@ def get_class_id(labelPath):
                     class_map[class_id]+=1
     return class_map
 
+"""
+delete id
+"""
+def delete_id(labelPath, idList):
+    for txtFile in os.listdir(labelPath):
+        with open(os.path.join(labelPath, txtFile), "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                parts = line.split()
+                if int(parts[0]) in idList:
+                    lines.remove(line)
+        with open(os.path.join(labelPath, txtFile), "w") as f:
+            f.writelines(lines)
+
 """重新给class_id编号"""
 def renumber_class_ids(labels_path,class_id_mapping):
     print("类别 ID 映射：", class_id_mapping)
@@ -79,11 +93,20 @@ rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
 
 
-print(get_class_ids(os.path.join(splitPath, "train", "labels")))
+# 参考1，3，8 
+
+
+# delete_id(os.path.join(splitPath, "train", "labels"), [7])
+
+
+
 # print(get_class_ids(os.path.join(splitPath, "val", "labels")))
-# class_id_mapping ={1:0,2:1,3:2,4:3,6:4,8:5}
-# renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
-# renumber_class_ids(os.path.join(splitPath, "val", "labels"), class_id_mapping)
+class_id_mapping ={1:0,3:1,8:2,2:3,4:4,6:5}
+renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
+renumber_class_ids(os.path.join(splitPath, "val", "labels"), class_id_mapping)
+
+print(get_class_id(os.path.join(splitPath, "train", "labels")))
+print(get_class_id(os.path.join(splitPath, "val", "labels")))
 
 
 

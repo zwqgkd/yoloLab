@@ -1,20 +1,19 @@
 # train: BDD/train/images
 # val: BDD/val/images
 # nc: 13
-# names: ["traffic sign", "traffic light", "car", "pedestrian","bus", 
+# names: ["traffic sign", "traffic light", "car", "pedestrian","bus",
 # "truck", "rider", "bicycle", "motorcycle", "train",
 # "other vehicle", "other person", "trailer"]
 
-train: dawn/train/images
-val: dawn/val/images
+# train: dawn/train/images
+# val: dawn/val/images
+# nc: 6
+# names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
+
+train: dawn_snow2sand/train/images
+val: dawn_snow2sand/val/images
 nc: 6
-names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
-
-# train: dawn_snow2sand/train/images
-# val: dawn_snow2sand/val/images
-# nc: 7
-# names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6", "class_7"]
-
+names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"] #看前3个cls
 
 # train: UG/train/images
 # val: UG/val/images
