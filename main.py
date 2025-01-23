@@ -15,7 +15,6 @@ def train(yamlPath, dataPath, modelName="yolo11s.pt"):
     project="runs/train",  # 训练结果保存路径
     name="exp",  # 训练结果文件夹名称（会在 project 路径下创建一个新文件夹）
     exist_ok=True,  # 如果已经存在同名的训练结果文件夹，允许覆盖
-    amp=False
     )
 
 if __name__=='__main__':

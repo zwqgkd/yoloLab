@@ -10,8 +10,8 @@
 # nc: 6
 # names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"]
 
-train: dawn_snow2sand_dan/train/images
-val: dawn_snow2sand/val/images
+train: dawn_dan/train/images
+val: dawn_dan/val/images
 nc: 6
 names: ["class_1", "class_2", "class_3", "class_4", "class_5", "class_6"] #看前3个cls
 

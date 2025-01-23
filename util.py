@@ -10,6 +10,8 @@ import torch
 def get_class_id(labelPath):
     class_map ={}
     for txtFile in os.listdir(labelPath):
+        if 'snow' in str(txtFile):
+            continue
         with open(os.path.join(labelPath, txtFile)) as f:
             lines = f.readlines()
             for line in lines:
@@ -34,11 +36,17 @@ def delete_id(labelPath, idList):
         with open(os.path.join(labelPath, txtFile), "w") as f:
             f.writelines(lines)
 
+
+
 """重新给class_id编号"""
 def renumber_class_ids(labels_path,class_id_mapping):
+    snow_label_count=0
     print("类别 ID 映射：", class_id_mapping)
 
     for label_file in os.listdir(labels_path):
+        if('snow' in str(label_file)):
+            snow_label_count+=1
+            continue
         if(label_file.endswith(".txt")):
             label_file_path = os.path.join(labels_path, label_file)
             try:
@@ -53,6 +61,7 @@ def renumber_class_ids(labels_path,class_id_mapping):
                         f.write(" ".join(parts))
             except IOError:
                 print(f"警告：文件{label_file}无法打开")
+    print(snow_label_count)
 """
 做数据分类
 """
@@ -84,7 +93,7 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets/dawn_snow2sand"
+splitPath = R"datasets/dawn_dan"
 
 rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
@@ -100,13 +109,10 @@ rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
 
 
-# print(get_class_ids(os.path.join(splitPath, "val", "labels")))
+print(get_class_id(os.path.join(splitPath, "train", "labels")))
 class_id_mapping ={1:0,3:1,8:2,2:3,4:4,6:5}
 renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)
-renumber_class_ids(os.path.join(splitPath, "val", "labels"), class_id_mapping)
 
-print(get_class_id(os.path.join(splitPath, "train", "labels")))
-print(get_class_id(os.path.join(splitPath, "val", "labels")))
 
 
 
