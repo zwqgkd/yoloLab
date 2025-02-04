@@ -10,7 +10,7 @@ def train(yamlPath, dataPath, modelName="yolo11n.pt"):
     data=dataPath,  # 数据集配置文件路径，这里你应该提供正确的 YAML 配置文件路径
     epochs=100,  # 训练的轮数，可以根据需要调整
     imgsz=640,  # 图像大小，YOLO 模型输入的图像尺寸，这里是 640x640
-    batch=32,  # 批大小，根据显存和硬件选择合适的值
+    batch=50,  # 批大小，根据显存和硬件选择合适的值
     device="0",  # 使用的 GPU 设备（如果你有多张 GPU，0 是第一张 GPU，"-1" 表示使用 CPU）
     project="runs/train",  # 训练结果保存路径
     name="exp",  # 训练结果文件夹名称（会在 project 路径下创建一个新文件夹）
@@ -33,11 +33,15 @@ if __name__=='__main__':
     bdd100k数据集:
     {0: 34724, 1: 26884, 2: 102837, 3: 658, 4: 460, 5: 13425, 6: 1660, 7: 4243, 8: 1039, 9: 85, 10: 15, 11: 2, 12: 1}
     """
-    # 原始模型
-    train("model_cfg/yolo11_all.yaml", "datasets/data_dawn.yaml")
-    # bifpn
-    train("model_cfg/yolo11_bifpn.yaml", "datasets/data_dawn.yaml")
-    # dcnv4
-    train("model_cfg/yolo11_dcnv4.yaml", "datasets/data_dawn.yaml")
-    # c2dan
-    train("model_cfg/yolo11_c2dan.yaml", "datasets/data_dawn.yaml")
+    # # 原始模型
+    # train("model_cfg/yolo11.yaml", "datasets/data_dawn.yaml")
+    # # bifpn
+    # train("model_cfg/yolo11_bifpn.yaml", "datasets/data_dawn.yaml")
+    # concat_bifpn
+    # train("model_cfg/yolo11_concat_bifpn.yaml", "datasets/data_dawn.yaml")
+    # # dcnv4
+    # train("model_cfg/yolo11_dcnv4.yaml", "datasets/data_dawn.yaml")
+    # # c2da
+    train("model_cfg/yolo11_c2da.yaml", "datasets/data_dawn.yaml")
+    # all
+    # train("model_cfg/yolo11_all.yaml", "datasets/data_dawn.yaml")

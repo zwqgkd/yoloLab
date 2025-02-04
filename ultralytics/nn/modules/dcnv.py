@@ -1,10 +1,10 @@
 import torch.nn as nn
 import torch
 from .conv import Conv
-# from DCN.modules.dcnv3 import DCNv3  # 导入新的 DCNv4
+from DCN.modules.dcnv3 import DCNv3  # 
 from DCNv4.modules.dcnv4 import DCNv4
 
-class DCN_Yolo11(nn.Module):
+class DCNV3_Yolo11(nn.Module):
     def __init__(self, inc, ouc, k=1, s=1, p=None, g=1, d=1, act=True):
         super().__init__()
         self.conv=Conv(inc, ouc, k=1)
@@ -46,7 +46,7 @@ class Bottleneck_DCNV4(nn.Module):  # 修改类名为 Bottleneck_DCNV4
         super().__init__()
         c_ = int(c2 * e)  # hidden channels
         self.cv1 = Conv(c1, c_, k[0], 1)
-        self.cv2 = DCNV4_Yolo11(c_, c2, k[1], 1, g=g)  # 使用新的 DCNV4_YoLo
+        self.cv2 = DCNV3_Yolo11(c_, c2, k[1], 1, g=g)  # 使用新的 DCNV4_YoLo
         self.add = shortcut and c1 == c2
 
     def forward(self, x):
