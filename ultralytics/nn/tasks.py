@@ -31,7 +31,7 @@ from ultralytics.nn.modules import (
     BiFPN_Add2,
     BiFPN_Add3,
     Concat_BiFPN,
-    # C3k2_DCNV4,
+    C3k2_DCNV4,
     DAN,
     AKConv,
     C2DA,
@@ -1019,7 +1019,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             PSA,
             SCDown,
             C2fCIB,
-            # C3k2_DCNV4, # @zwqgkd
+            C3k2_DCNV4, # @zwqgkd
             C2DA, # @zwqgkd
         }:
             c1, c2 = ch[f], args[0]
@@ -1047,7 +1047,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 C2fPSA,
                 C2fCIB,
                 C2PSA,
-                # C3k2_DCNV4, # @zwqgkd
+                C3k2_DCNV4, # @zwqgkd
                 C2DA, # @zwqgkd
             }:
                 args.insert(2, n)  # number of repeats
@@ -1058,8 +1058,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             #         args[3] = True
 
             # @zwqgkd
-            # if m in {C3k2, C3k2_DCNV4}:  # for M/L/X sizes
-            if m in {C3k2}:
+            if m in {C3k2, C3k2_DCNV4}:  # for M/L/X sizes
                 legacy = False
                 if scale in "mlx":
                     args[3] = True

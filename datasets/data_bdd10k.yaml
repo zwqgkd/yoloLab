@@ -1,0 +1,6 @@
+# train: BDD/train/images
+# val: BDD/val/images
+# nc: 13
+# names: ["traffic sign", "traffic light", "car", "pedestrian","bus", 
+# "truck", "rider", "bicycle", "motorcycle", "train",
+# "other vehicle", "other person", "trailer"]

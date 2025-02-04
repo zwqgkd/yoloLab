@@ -73,7 +73,7 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets/dawn"
+splitPath = R"datasets/bdd100k"
 
 rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
@@ -82,7 +82,7 @@ rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
 
 
-print(get_class_ids(os.path.join(splitPath, "train", "labels")))
+# print(get_class_ids(os.path.join(splitPath, "train", "labels")))
 print(get_class_ids(os.path.join(splitPath, "val", "labels")))
 # class_id_mapping ={1:0,2:1,3:2,4:3,6:4,8:5}
 # renumber_class_ids(os.path.join(splitPath, "train", "labels"), class_id_mapping)

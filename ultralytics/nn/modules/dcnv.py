@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 from .conv import Conv
-from DCN.modules.dcnv3 import DCNv3  # 导入新的 DCNv4
+# from DCN.modules.dcnv3 import DCNv3  # 导入新的 DCNv4
 from DCNv4.modules.dcnv4 import DCNv4
 
 class DCN_Yolo11(nn.Module):

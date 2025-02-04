@@ -1,7 +1,7 @@
 runs/
 .vscode/
 **/datasets/*
-!datasets/data.yaml
+!datasets/*.yaml
 .venv/
 .idea/
 **/__pycache__/

@@ -23,11 +23,9 @@ from .bifpn import (
     BiFPN_Add3,
     Concat_BiFPN
 )
-# from .dcnv4 import (
-#     DCNV4_Yolo11,
-#     Bottleneck_DCNV4,
-#     C3k2_DCNV4,
-# )
+from .dcnv import (
+    C3k2_DCNV4,
+)
 from .dan import (
     DAN,
 )
