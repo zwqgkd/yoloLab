@@ -208,9 +208,8 @@ class v8DetectionLoss:
         """Calculate detection loss and domain classification loss."""
         # 解包预测结果 (detection predictions, domain predictions)
         det_preds, domain_pred = preds if isinstance(preds, tuple) else (preds, None)
-        
         # 初始化损失
-        loss = torch.zeros(3, device=self.device)  # box, cls, dfl
+        loss = torch.zeros(4, device=self.device)  # box, cls, dfl
         batch_size = len(batch['im_file'])  # 使用图片数量作为batch_size
         
         # 计算域分类损失
@@ -225,10 +224,10 @@ class v8DetectionLoss:
                 domain_pred.view(-1), domain_labels
             )
         
-        # 检查是否有检测标签（判断是否为源域数据）
-        has_labels = 'cls' in batch and 'bboxes' in batch and len(batch['cls']) > 0
-        
-        
+        # # 检查是否有检测标签（判断是否为源域数据）
+        # has_labels = 'cls' in batch and 'bboxes' in batch and len(batch['cls']) > 0
+
+
         feats = det_preds[1] if isinstance(det_preds, tuple) else det_preds
         pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
             (self.reg_max * 4, self.nc), 1
@@ -287,7 +286,8 @@ class v8DetectionLoss:
         
         # 组合检测损失和域分类损失
         lambda_domain = 0.1  # 域适应损失权重
-        total_loss = det_loss + lambda_domain * domain_loss
+        total_loss = det_loss + lambda_domain * domain_loss * batch_size
+        loss[3] = domain_loss  # domain gain
         
         return total_loss, loss.detach()
 
