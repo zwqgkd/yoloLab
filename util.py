@@ -8,22 +8,20 @@ import torch
 统计类别个数
 """
 def get_class_ids(labels_path):
-    class_ids=set()
+    class_ids={}
     for label_file in os.listdir(labels_path):
         if label_file.endswith(".txt"):
             try:
                 with open(os.path.join(labels_path, label_file), "r") as f:
                     for line in f:
-                        if(int(line.split(" ")[0])==7):
-                            print(label_file)
-                        try:
-                            class_id=int(line.split(" ")[0])
-                            class_ids.add(class_id)
-                        except ValueError:
-                            print(f"警告：文件{label_file}中存在无效的类别 ID")
+                        id=int(line.split(" ")[0])
+                        if id in class_ids:
+                            class_ids[id]+=1
+                        else:
+                            class_ids[id]=1
             except IOError:
                 print(f"警告：文件{label_file}无法打开")
-    return class_ids, len(class_ids)
+    return class_ids
 
 """重新给class_id编号"""
 def renumber_class_ids(labels_path,class_id_mapping):
@@ -75,7 +73,7 @@ def dataSetSplit(imgDataSetPath, lableDataSetPath, splitPath, splitRate=0.8):
 # print(torch.cuda.is_available())  # 如果返回 True，说明有 GPU 可用
 # print(torch.cuda.device_count())  # 返回 GPU 的数量
 
-splitPath = R"datasets/UG"
+splitPath = R"datasets/dawn"
 
 rootPath =R"C:\Projects\gkd\dataset\766ygrbt8y-3\DAWN"
 
