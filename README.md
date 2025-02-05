@@ -1,6 +1,14 @@
 ### Environment
 - python 3.12.0
-- 构建datasets/
+
 - `pip install opencv-python pandas scipy`
-- 选择对应的DCNv4_~，改名为DCNv4
- 
+
+- 配置dcnv环境
+
+  ```shell
+  cd ops_dcnv
+  python setup.py build install
+  ```
+
+  
+
